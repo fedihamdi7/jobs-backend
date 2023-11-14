@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { Document } from "mongoose";
+import { Document } from "mongoose";
 import * as bcrypt from 'bcrypt';
 
 @Schema()
@@ -11,7 +11,8 @@ import * as bcrypt from 'bcrypt';
     @Prop(
         {
             unique: true,
-            trim: true
+            trim: true,
+
         }
     )
     email: string;

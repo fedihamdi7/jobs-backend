@@ -14,11 +14,6 @@ export class UserService {
 
 
   create(createUserDto: CreateUserDto) {
-    // check email regex
-    const emailRegex = new RegExp('^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$');
-    if (!emailRegex.test(createUserDto.email)) {
-      throw new ConflictException('Email not valid');
-    }
     return this.userModel.create(createUserDto);  
   }
 

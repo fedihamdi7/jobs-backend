@@ -3,7 +3,7 @@ import { MongoError } from 'mongodb';
 import { Response } from 'express';
 
 @Catch(MongoError)
-export class UniqueConstraintExceptionFilter implements ExceptionFilter {
+export class UniqueEmailExceptionFilter implements ExceptionFilter {
   catch(exception: MongoError, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse<Response>();
     const status = HttpStatus.CONFLICT; // 409 Conflict for unique constraint violation
