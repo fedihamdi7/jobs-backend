@@ -4,8 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UniqueEmailExceptionFilter } from 'src/exceptions/unique-email.exception';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
-import { log } from 'console';
+
 
 
 @Controller('user')
