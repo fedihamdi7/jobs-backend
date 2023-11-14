@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseFilters } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseFilters, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UniqueEmailExceptionFilter } from 'src/exceptions/unique-email.exception';
+import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
+import { log } from 'console';
 
 
 @Controller('user')
@@ -11,7 +14,8 @@ export class UserController {
 
   @Post()
   @UseFilters(new UniqueEmailExceptionFilter())
-  create(@Body() createUserDto: CreateUserDto) {
+  @UseGuards(AuthGuard())
+  create(@Body() createUserDto: CreateUserDto, @Req() req: any) {
     return this.userService.create(createUserDto);
   }
 

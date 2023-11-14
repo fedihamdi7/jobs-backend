@@ -4,12 +4,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
 import { Model } from 'mongoose';
+import { log } from 'console';
 
 @Injectable()
 export class UserService {
 
  constructor(
-  @InjectModel('User') private readonly userModel: Model<User>,
+  @InjectModel(User.name) private readonly userModel: Model<User>,
  ) {}
 
 
@@ -23,6 +24,11 @@ export class UserService {
 
   findOne(id: string) {
     return this.userModel.findById(id);
+  }
+
+  findByEmail(email: string) : Promise<User | null> {
+    return this.userModel.where({email}).findOne();
+    
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
