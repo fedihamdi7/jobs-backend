@@ -17,7 +17,6 @@ export class AuthService {
       return { message: 'Invalid credentials email' };
     }
     if (!await bcrypt.compare(password, user.password)) {
-      log(bcrypt.compare(password, user.password))
       return { message: 'Invalid credentials pwd' };
     }
 
