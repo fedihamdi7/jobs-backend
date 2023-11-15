@@ -4,8 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UniqueEmailExceptionFilter } from 'src/exceptions/unique-email.exception';
 import { AuthGuard } from '@nestjs/passport';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { FileUploadInterceptor } from 'src/interceptors/file-upload.interceptor';
 
 
 
@@ -16,22 +15,7 @@ export class UserController {
 
   @Post()
   @UseFilters(new UniqueEmailExceptionFilter())
-  @UseInterceptors(FileInterceptor('profilePic',
-  {
-    storage: diskStorage({
-      destination: './assets/profile-pics',
-      filename: (req, file, cb) => {
-        const originalName = file.originalname.split('.');
-        const extension = originalName[originalName.length - 1];
-        const randomName = Array(32).fill(null).map(() => Math.round(Math.random() * 16).toString(16)).join('');
-        const fileName = `${randomName}.${extension}`;
-        file.originalname = fileName;
-        cb(null, fileName);
-        
-      }
-    })
-})
-  )
+  @UseInterceptors(FileUploadInterceptor)
   create(@Body() createUserDto: CreateUserDto, @UploadedFile() file : Express.Multer.File) {   
     return this.userService.create(createUserDto, file);
   }
