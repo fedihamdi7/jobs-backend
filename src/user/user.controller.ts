@@ -8,12 +8,12 @@ import { AuthGuard } from '@nestjs/passport';
 
 
 @Controller('user')
+@UseGuards(AuthGuard())
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
   @UseFilters(new UniqueEmailExceptionFilter())
-  @UseGuards(AuthGuard())
   create(@Body() createUserDto: CreateUserDto, @Req() req: any) {
     return this.userService.create(createUserDto);
   }
