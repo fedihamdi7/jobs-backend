@@ -1,8 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseFilters, UseGuards, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, UseGuards, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UniqueEmailExceptionFilter } from 'src/exceptions/unique-email.exception';
 import { AuthGuard } from '@nestjs/passport';
 import { FileUploadInterceptor } from 'src/interceptors/file-upload.interceptor';
 
@@ -11,14 +9,8 @@ import { FileUploadInterceptor } from 'src/interceptors/file-upload.interceptor'
 @Controller('user')
 @UseGuards(AuthGuard())
 export class UserController {
-  constructor(private readonly userService: UserService) {}
 
-  @Post()
-  @UseFilters(new UniqueEmailExceptionFilter())
-  @UseInterceptors(FileUploadInterceptor)
-  create(@Body() createUserDto: CreateUserDto, @UploadedFile() file : Express.Multer.File) {   
-    return this.userService.create(createUserDto, file);
-  }
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   findAll() {

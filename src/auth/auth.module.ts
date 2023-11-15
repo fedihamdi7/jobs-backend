@@ -5,8 +5,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UserSchema } from 'src/user/entities/user.entity';
 @Module({
     imports: [
+        MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
             secret: 'secret', 
