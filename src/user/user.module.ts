@@ -8,11 +8,6 @@ import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
-    // MulterModule.registerAsync({
-    //   useFactory: () => ({
-    //     dest: './assets/profile-pics',
-    //   }),
-    // }),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     forwardRef(() => AuthModule),
   ],

@@ -41,8 +41,12 @@ export class UserService {
 
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(id, updateUserDto);
+  update(id: string, updateUserDto: UpdateUserDto, file: Express.Multer.File) {
+    const updatedUserDto = file
+      ? { ...updateUserDto, profilePic: file.originalname }
+      : updateUserDto;
+  
+    return this.userModel.findByIdAndUpdate(id, updatedUserDto, { new: true });
   }
 
   remove(id: string) {
