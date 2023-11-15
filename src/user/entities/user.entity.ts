@@ -20,6 +20,9 @@ import * as bcrypt from 'bcrypt';
     @Prop()
     password: string;
 
+    @Prop({ default: 'default-profile-picture.jpg' })
+    profilePic: string;
+
 }
 
 export type UserDocument = User & Document;

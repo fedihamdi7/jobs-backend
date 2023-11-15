@@ -11,4 +11,6 @@ export class CreateUserDto {
 
     @IsNotEmpty({ message: 'The Password is required' })
     readonly password: string;
+
+    readonly profilePic?: string;
 }
