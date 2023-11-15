@@ -2,6 +2,11 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 import * as bcrypt from 'bcrypt';
 
+
+export enum UserRole {
+    ADMIN = 'admin',
+    USER = 'user'
+}
 @Schema()
  export class User {
 
@@ -22,6 +27,9 @@ import * as bcrypt from 'bcrypt';
 
     @Prop({ default: 'default-profile-picture.jpg' })
     profilePic: string;
+ 
+    @Prop({ type: String, enum: UserRole, default: UserRole.USER })
+    role: UserRole;
 
 }
 
