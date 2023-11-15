@@ -32,6 +32,31 @@ export enum UserRole {
     @Prop({ type: String, enum: UserRole, default: UserRole.USER })
     role: UserRole;
 
+    @Prop()
+    phone: string;
+
+    @Prop()
+    address: string;
+
+    @Prop()
+    nationality: string;
+
+    @Prop(
+        {
+            type: Date,
+        }
+    )
+    birthDate: Date;
+
+    @Prop()
+    governorate: string;
+
+    // TODO: 'add resume', links [github, linkedin, facebook, twitter, instagram],
+
+    //TODO: add company user type
+
+    //
+
 }
 
 export type UserDocument = User & Document;
@@ -43,10 +68,3 @@ UserSchema.pre('save', async function (next: any) {
     user.password = await bcrypt.hash(user.password, 10);
     next();
 });
-
-// check if password is valid
-UserSchema.methods.isValidPassword = async function (password: string) {
-    const user: any = this;
-    const compare = await bcrypt.compare(password, user.password);
-    return compare;
-};
