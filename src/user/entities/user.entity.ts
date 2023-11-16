@@ -80,9 +80,9 @@ export enum UserRole {
     };
 
     @Prop({type : Types.ObjectId, ref : 'Post'})
-    posts : Types.ObjectId[];
+    postsAppliedIn : Types.ObjectId[];
 
-    @Prop()
+    @Prop({type : Types.ObjectId, ref : 'Post'})
     savedPosts : Types.ObjectId[];
 
 }

@@ -52,7 +52,7 @@ export class CreateUserDto {
     };
 
     @IsOptional()
-    posts : Types.ObjectId[];
+    postsAppliedIn : Types.ObjectId[];
 
     @IsOptional()
     savedPosts : Types.ObjectId[];
