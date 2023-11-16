@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFiles, UseFilters, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UploadedFiles, UseFilters, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UniqueEmailExceptionFilter } from 'src/exceptions/unique-email.exception';
 import { FileUploadInterceptor } from 'src/interceptors/file-upload.interceptor';
@@ -29,5 +29,10 @@ export class AuthController {
         const resume = files.find(file => file.fieldname === 'resume'); 
         
       return this.authService.create(createUserDto, profilePic,resume);    
+    }
+
+    @Get('verify/:token')
+    async verify(@Param('token') token: string) {
+        return this.authService.verify(token);
     }
 }

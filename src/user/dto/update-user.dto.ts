@@ -21,5 +21,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
         instagram: string;
         website: string;
     };
+    isVerified?: boolean;
     
 }

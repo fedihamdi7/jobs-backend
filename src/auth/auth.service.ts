@@ -1,11 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from 'src/user/entities/user.entity';
+import { User, VerificationToken } from 'src/user/entities/user.entity';
+import { MailerService } from '@nestjs-modules/mailer';
+import * as fs from 'fs';
+import * as Handlebars from 'handlebars';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +16,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     @InjectModel(User.name) private readonly userModel: Model<User>,
-
+    @InjectModel(VerificationToken.name) private verificationTokenModel: Model<VerificationToken>,
+    private mailerService: MailerService,
   ) { }
 
   async login(email: string, password: string) {
@@ -36,7 +40,6 @@ export class AuthService {
 
   async create(createUserDto: CreateUserDto, profilePic?: Express.Multer.File, resume?: Express.Multer.File) {
 
-    // Parse the links property into a JavaScript object
     if (typeof createUserDto.links === 'string') {
       try {
         createUserDto.links = JSON.parse(createUserDto.links);
@@ -50,16 +53,51 @@ export class AuthService {
     const createdUser = new this.userModel(createUserDto);
 
     if (profilePic) {
-      // If a file was provided, add its information to the user
       createdUser.profilePic = profilePic.filename;
     }
 
-    if(resume) {
+    if (resume) {
       createdUser.resume = resume.filename;
     }
-
+    const token = crypto.randomUUID();
+    const verificationToken = new this.verificationTokenModel({ _userId: createdUser._id, token, createdAt: Date.now() });
+    this.sendMail(createdUser.email, 'feee@ez.com', 'sybject', 'fezfzefz', verificationToken.token)
+    await verificationToken.save();
     return createdUser.save();
 
+  }
 
+
+  async verify(token: string) {
+    const verificationToken = await this.verificationTokenModel.findOne({ token });
+    if (!verificationToken) {
+      throw new NotFoundException('Invalid token');
+    }
+
+    const user = await this.userModel.findById(verificationToken._userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.isVerified = true;
+    await user.save();
+    await this.verificationTokenModel.deleteOne({ token });
+
+    return { message: 'User verified' };
+  }
+
+  sendMail(to: string, from: string, subject: string, text: string, token: string) {
+    const templateSource = fs.readFileSync('src/mails/email-verification.template.hbs', 'utf8');
+    const template = Handlebars.compile(templateSource);
+    const html = template({ token });
+
+    this.mailerService.sendMail({
+      to: to,
+      from: from,
+      subject: subject,
+      text: text,
+      html: html,
+
+    })
   }
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #333;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        b {
+            font-size: 16px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <b>This is an email verification from JOBS</b>
+    plase click the link below to verify your email address
+    <br>
+    <a href="http://localhost:3000/auth/verify/{{token}}">Verify Email</a>
+</body>
+</html>

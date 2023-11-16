@@ -6,16 +6,31 @@ import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserSchema } from 'src/user/entities/user.entity';
+import { UserSchema, VerificationTokenSchema } from 'src/user/entities/user.entity';
+import { MailerModule } from '@nestjs-modules/mailer';
+
 @Module({
     imports: [
-        MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+        MongooseModule.forFeature([
+            { name: 'User', schema: UserSchema },
+            { name: 'VerificationToken', schema: VerificationTokenSchema}
+        ]),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
             secret: 'secret', 
             signOptions: { expiresIn: '24h' }, 
           }),
           forwardRef(() => UserModule),
+          MailerModule.forRoot({
+            transport: {
+                host: "sandbox.smtp.mailtrap.io",
+                port: 2525,
+                auth: {
+                  user: "0ca653567db8fe",
+                  pass: "106368b474a881"
+                }}
+          })
+         
     ],
     controllers: [AuthController],
     providers: [AuthService, JwtStrategy],

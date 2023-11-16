@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 import * as bcrypt from 'bcrypt';
 
 
@@ -22,6 +22,9 @@ export enum UserRole {
         }
     )
     email: string;
+
+    @Prop({ default: false })
+    isVerified: boolean;
 
     @Prop()
     password: string;
@@ -88,3 +91,18 @@ UserSchema.pre('save', async function (next: any) {
     user.password = await bcrypt.hash(user.password, 10);
     next();
 });
+
+
+@Schema()
+export class VerificationToken {
+    @Prop({ type: Types.ObjectId, ref: 'User' })
+    _userId: Types.ObjectId;
+
+    @Prop()
+    token: string;
+
+    @Prop()
+    createdAt: Date;
+}
+
+export const VerificationTokenSchema = SchemaFactory.createForClass(VerificationToken);
