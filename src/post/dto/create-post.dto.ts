@@ -1,4 +1,5 @@
 import { IsEmpty, IsNotEmpty, IsOptional } from "class-validator";
+import { Types } from "mongoose";
 
 export class CreatePostDto {
 
@@ -9,7 +10,7 @@ export class CreatePostDto {
     description: string;
     
     @IsEmpty()
-    company: string;
+    company: Types.ObjectId;
     
     @IsNotEmpty({ message: 'The number of available positions is required' })
     numberOfAvailablePositions: number;

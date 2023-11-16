@@ -1,5 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
+import { Types } from 'mongoose';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
     name: string;
@@ -22,5 +23,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
         website: string;
     };
     isVerified?: boolean;
+    posts?: Types.ObjectId[];
     
 }

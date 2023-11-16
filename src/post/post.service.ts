@@ -3,7 +3,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post } from './entities/post.entity';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class PostService {
@@ -12,8 +12,10 @@ export class PostService {
     @InjectModel('Post') private readonly postModel: Model<Post>
   ) {}
 
-  create(createPostDto: CreatePostDto) {
-    return this.postModel.create(createPostDto);
+  async create(createPostDto: CreatePostDto, userId: string) {
+    createPostDto.company = new Types.ObjectId(userId);
+    const createdPost = await this.postModel.create(createPostDto);
+    return createdPost;
   }
 
   findAll() {

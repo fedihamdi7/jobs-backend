@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 @Schema()
 export class Post {
@@ -10,8 +10,8 @@ export class Post {
     @Prop()
     description: string;
 
-    @Prop({ type: String, ref: 'User' })
-    company: string;
+    @Prop({ type: Types.ObjectId, ref: 'User' })
+    company: Types.ObjectId;
 
     @Prop()
     numberOfAvailablePositions: number;

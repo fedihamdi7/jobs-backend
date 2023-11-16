@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsDate, MinLength, MaxLength, IsOptional } from "class-validator";
+import { Types } from "mongoose";
 
 export class CreateUserDto {
 
@@ -49,4 +50,7 @@ export class CreateUserDto {
         instagram: string;
         website: string;
     };
+
+    @IsOptional()
+    posts : Types.ObjectId[];
 }

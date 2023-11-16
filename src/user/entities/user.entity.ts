@@ -79,6 +79,9 @@ export enum UserRole {
         website: string;
     };
 
+    @Prop({type : Types.ObjectId, ref : 'Post'})
+    posts : Types.ObjectId[];
+
 
 }
 
