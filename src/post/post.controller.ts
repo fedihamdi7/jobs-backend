@@ -41,4 +41,10 @@ export class PostController {
   findAllPostsOfUser(@Param('id') id: string) {
     return this.postService.findAllPostsOfUser(id);
   }
+
+  //add a post to saved posts of a user
+  @Post('save/:id')
+  savePost(@Param('id') id: string, @Headers('user_id') userId: string) {
+    return this.postService.savePost(id, userId);
+  }
 }

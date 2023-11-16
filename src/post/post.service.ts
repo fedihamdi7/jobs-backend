@@ -45,4 +45,23 @@ export class PostService {
     return user.posts;
 
   }
+
+  async savePost(id: string, userId: string) {
+    const user = await this.userModel.findById(userId);
+  const savedPosts = user.savedPosts.map(post => post.toString());
+  const postIndex = savedPosts.indexOf(id); 
+
+  if (postIndex === -1) {
+    // Post is not saved yet, save it
+    await this.userModel.findByIdAndUpdate(userId, { $push: { savedPosts: new Types.ObjectId(id) } });
+    await this.postModel.findByIdAndUpdate(id, { $inc: { numberOfSaved: 1 } });
+    return { message: 'Post saved successfully' };
+  } else {
+    // Post is already saved, unsave it
+    await this.userModel.findByIdAndUpdate(userId, { $pull: { savedPosts: new Types.ObjectId(id) } });
+    await this.postModel.findByIdAndUpdate(id, { $inc: { numberOfSaved: -1 } });
+    return { message: 'Post unsaved successfully' };
+  }
+
+  }
 }

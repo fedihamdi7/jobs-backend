@@ -53,4 +53,7 @@ export class CreateUserDto {
 
     @IsOptional()
     posts : Types.ObjectId[];
+
+    @IsOptional()
+    savedPosts : Types.ObjectId[];
 }
