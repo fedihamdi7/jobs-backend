@@ -10,30 +10,31 @@ import { UserSchema, VerificationTokenSchema } from 'src/user/entities/user.enti
 import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([
-            { name: 'User', schema: UserSchema },
-            { name: 'VerificationToken', schema: VerificationTokenSchema}
-        ]),
-        PassportModule.register({ defaultStrategy: 'jwt' }),
-        JwtModule.register({
-            secret: 'secret', 
-            signOptions: { expiresIn: '24h' }, 
-          }),
-          forwardRef(() => UserModule),
-          MailerModule.forRoot({
-            transport: {
-                host: "sandbox.smtp.mailtrap.io",
-                port: 2525,
-                auth: {
-                  user: "0ca653567db8fe",
-                  pass: "106368b474a881"
-                }}
-          })
-         
-    ],
-    controllers: [AuthController],
-    providers: [AuthService, JwtStrategy],
-    exports: [JwtStrategy, PassportModule]
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'User', schema: UserSchema },
+      { name: 'VerificationToken', schema: VerificationTokenSchema }
+    ]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: 'secret',
+      signOptions: { expiresIn: '24h' },
+    }),
+    forwardRef(() => UserModule),
+    MailerModule.forRoot({
+      transport: {
+        host: "sandbox.smtp.mailtrap.io",
+        port: 2525,
+        auth: {
+          user: "0ca653567db8fe",
+          pass: "106368b474a881"
+        }
+      }
+    })
+
+  ],
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
+  exports: [JwtStrategy, PassportModule]
 })
-export class AuthModule {}
+export class AuthModule { }

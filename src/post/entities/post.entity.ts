@@ -50,9 +50,6 @@ export class Post {
     @Prop()
     rejected: number;
 
-    @Prop()
-    pending: number;
-
     @Prop(
         {default: () => {
             let date = new Date();

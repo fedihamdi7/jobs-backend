@@ -50,9 +50,6 @@ export class CreatePostDto {
     rejected: number;
     
     @IsEmpty()
-    pending: number;
-    
-    @IsEmpty()
     dateOfCreation: Date;
     
     @IsOptional()
