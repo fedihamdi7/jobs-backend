@@ -1,8 +1,9 @@
-import { Controller, Get, Body, Patch, Param, Delete, UseGuards, UploadedFile, UseInterceptors, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { FileUploadInterceptor } from 'src/interceptors/file-upload.interceptor';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 @UseGuards(AuthGuard())
@@ -21,9 +22,11 @@ export class UserController {
   }
 
   @Patch(':id')
-  @UseInterceptors(FileUploadInterceptor)
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile() file : Express.Multer.File) {
-    return this.userService.update(id, updateUserDto, file);
+  @UseInterceptors(AnyFilesInterceptor(FileUploadInterceptor))
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFiles() files : Express.Multer.File[]) {
+    const profilePic = files?.find(file => file.fieldname === 'profilePic');
+    const resume = files?.find(file => file.fieldname === 'resume'); 
+    return this.userService.update(id, updateUserDto, profilePic, resume);
   }
 
   @Delete(':id')

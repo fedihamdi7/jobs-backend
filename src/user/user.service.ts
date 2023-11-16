@@ -3,7 +3,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
 import { Model } from 'mongoose';
+import { unlink } from 'fs';
+import { promisify } from 'util';
 
+const unlinkAsync = promisify(unlink);
 @Injectable()
 export class UserService {
 
@@ -24,7 +27,7 @@ export class UserService {
 
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, file: Express.Multer.File) {
+  async update(id: string, updateUserDto: UpdateUserDto, profilePic?: Express.Multer.File, resume?: Express.Multer.File) {
     const user = await this.userModel.findById(id);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -39,8 +42,16 @@ export class UserService {
       }
     }
 
-    if (file) {
-      updateUserDto.profilePic = file.filename;
+    if (profilePic) {
+      if (user.profilePic !== 'default-profile-picture.jpg') {
+        await unlinkAsync(`./assets/profile-pics/${user.profilePic}`);
+      }
+      updateUserDto.profilePic = profilePic.filename;
+    }
+
+    if(resume) {
+      await unlinkAsync(`./assets/resumes/${user.resume}`);
+      updateUserDto.resume = resume.filename;
     }
 
     Object.assign(user, updateUserDto);

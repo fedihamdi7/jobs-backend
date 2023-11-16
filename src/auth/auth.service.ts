@@ -34,7 +34,7 @@ export class AuthService {
     return this.jwtService.signAsync(payload);
   }
 
-  async create(createUserDto: CreateUserDto, file: Express.Multer.File) {
+  async create(createUserDto: CreateUserDto, profilePic?: Express.Multer.File, resume?: Express.Multer.File) {
 
     // Parse the links property into a JavaScript object
     if (typeof createUserDto.links === 'string') {
@@ -49,9 +49,13 @@ export class AuthService {
 
     const createdUser = new this.userModel(createUserDto);
 
-    if (file) {
+    if (profilePic) {
       // If a file was provided, add its information to the user
-      createdUser.profilePic = file.filename;
+      createdUser.profilePic = profilePic.filename;
+    }
+
+    if(resume) {
+      createdUser.resume = resume.filename;
     }
 
     return createdUser.save();

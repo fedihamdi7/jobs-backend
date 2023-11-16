@@ -1,8 +1,9 @@
-import { Body, Controller, Post, UploadedFile, UseFilters, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFiles, UseFilters, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UniqueEmailExceptionFilter } from 'src/exceptions/unique-email.exception';
 import { FileUploadInterceptor } from 'src/interceptors/file-upload.interceptor';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +23,11 @@ export class AuthController {
 
     @Post('register')
     @UseFilters(new UniqueEmailExceptionFilter())
-    @UseInterceptors(FileUploadInterceptor)
-    create(@Body() createUserDto: CreateUserDto, @UploadedFile() file : Express.Multer.File) {   
-      return this.authService.create(createUserDto, file);
+    @UseInterceptors(AnyFilesInterceptor(FileUploadInterceptor))
+    create(@Body() createUserDto: CreateUserDto, @UploadedFiles() files : Express.Multer.File[]) {   
+        const profilePic = files.find(file => file.fieldname === 'profilePic');
+        const resume = files.find(file => file.fieldname === 'resume'); 
+        
+      return this.authService.create(createUserDto, profilePic,resume);    
     }
 }
