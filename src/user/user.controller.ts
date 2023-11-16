@@ -3,14 +3,9 @@ import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { FileUploadInterceptor } from 'src/interceptors/file-upload.interceptor';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { UserRole } from './entities/user.entity';
-
-export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 
 @Controller('user')
-@UseGuards(AuthGuard(), RolesGuard)
-@Roles(UserRole.ADMIN)
+@UseGuards(AuthGuard())
 export class UserController {
 
   constructor(private readonly userService: UserService) {}
