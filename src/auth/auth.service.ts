@@ -21,6 +21,7 @@ export class AuthService {
   ) { }
 
   async login(email: string, password: string) {
+    
     const user: any = await this.userService.findByEmail(email);
     if (!user) {
       return { message: 'Invalid credentials email' };
@@ -29,6 +30,9 @@ export class AuthService {
       return { message: 'Invalid credentials pwd' };
     }
 
+    if (!user.isVerified) {
+      return { message: 'User not verified' };
+    }
     const payload = { id: user._id };
     const token = await this.generateToken(payload);
     return { user, token };
