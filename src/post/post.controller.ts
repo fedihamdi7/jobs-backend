@@ -31,4 +31,10 @@ export class PostController {
   remove(@Param('id') id: string) {
     return this.postService.remove(id);
   }
+
+  //get all posts of a user
+  @Get('user/:id')
+  findAllPostsOfUser(@Param('id') id: string) {
+    return this.postService.findAllPostsOfUser(id);
+  }
 }

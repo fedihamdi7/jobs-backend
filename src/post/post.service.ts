@@ -39,4 +39,10 @@ export class PostService {
   remove(id: string) {
     return this.postModel.findByIdAndDelete(id);
   }
+
+  async findAllPostsOfUser(id: string) {
+    const user : any = await this.userModel.findById(id).populate('posts');   
+    return user.posts;
+
+  }
 }
