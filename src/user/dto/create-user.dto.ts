@@ -47,5 +47,6 @@ export class CreateUserDto {
         facebook: string;
         twitter: string;
         instagram: string;
+        website: string;
     };
 }

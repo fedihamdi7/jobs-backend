@@ -19,6 +19,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
         facebook: string;
         twitter: string;
         instagram: string;
+        website: string;
     };
     
 }

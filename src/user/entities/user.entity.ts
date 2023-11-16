@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 export enum UserRole {
     ADMIN = 'admin',
     USER = 'user',
-    EMPLOYER = 'employer',
+    COMPANY = 'company',
 }
 @Schema()
  export class User {
@@ -62,6 +62,7 @@ export enum UserRole {
             facebook: { type: String, default: null },
             twitter: { type: String, default: null },
             instagram: { type: String, default: null },
+            website: { type: String, default: null },
         },
         default: {},
     })
@@ -72,12 +73,9 @@ export enum UserRole {
         facebook: string;
         twitter: string;
         instagram: string;
+        website: string;
     };
 
-
-    //TODO: add company user type
-
-    //
 
 }
 
