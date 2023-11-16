@@ -51,7 +51,29 @@ export enum UserRole {
     @Prop()
     governorate: string;
 
-    // TODO: 'add resume', links [github, linkedin, facebook, twitter, instagram],
+    @Prop()
+    resume : string;
+
+    @Prop({
+        type: {
+            _id : false,
+            github: { type: String, default: null },
+            linkedin: { type: String, default: null },
+            facebook: { type: String, default: null },
+            twitter: { type: String, default: null },
+            instagram: { type: String, default: null },
+        },
+        default: {},
+    })
+    links: {
+        [x: string]: any;
+        github: string;
+        linkedin: string;
+        facebook: string;
+        twitter: string;
+        instagram: string;
+    };
+
 
     //TODO: add company user type
 

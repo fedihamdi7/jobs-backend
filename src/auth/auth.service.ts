@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
@@ -25,7 +25,7 @@ export class AuthService {
       return { message: 'Invalid credentials pwd' };
     }
 
-    const payload = { id : user._id };
+    const payload = { id: user._id };
     const token = await this.generateToken(payload);
     return { user, token };
   }
@@ -35,15 +35,25 @@ export class AuthService {
   }
 
   async create(createUserDto: CreateUserDto, file: Express.Multer.File) {
-    const { name, email, password } = createUserDto;
 
-    const createdUser = new this.userModel({
-      name,
-      email,
-      password,
-      ...(file && { profilePic: file.originalname }),
-    });
-        
+    // Parse the links property into a JavaScript object
+    if (typeof createUserDto.links === 'string') {
+      try {
+        createUserDto.links = JSON.parse(createUserDto.links);
+
+      } catch (error) {
+        throw new BadRequestException('Links must be a valid JSON object');
+
+      }
+    }
+
+    const createdUser = new this.userModel(createUserDto);
+
+    if (file) {
+      // If a file was provided, add its information to the user
+      createdUser.profilePic = file.filename;
+    }
+
     return createdUser.save();
 
 

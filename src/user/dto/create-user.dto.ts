@@ -12,16 +12,20 @@ export class CreateUserDto {
     @IsNotEmpty({ message: 'The Password is required' })
     readonly password: string;
 
+    @IsOptional()
     readonly profilePic?: string;
 
     readonly role?: string;
 
+    @IsOptional()
     @MinLength(8, { message: 'The phone number must be 8 characters long' })
     @MaxLength(8, { message: 'The phone number must be 8 characters long' })
     readonly phone?: number;
 
+    @IsOptional()
     readonly adresse?: string;
 
+    @IsOptional()
     readonly nationality?: string;
 
     @IsDate(
@@ -30,5 +34,18 @@ export class CreateUserDto {
     @IsOptional()
     readonly birthDate?: Date;
 
+    @IsOptional()
     readonly governorate?: string;
+
+    @IsOptional()
+    readonly resume?: string;
+
+    @IsOptional()
+    links?: {
+        github: string;
+        linkedin: string;
+        facebook: string;
+        twitter: string;
+        instagram: string;
+    };
 }
