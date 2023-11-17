@@ -84,6 +84,7 @@ export class PostService {
       const companyId = post.company;
       await this.addNotificaiton(
         {
+          _id : new Types.ObjectId(),
           message : "New applicant to your post",
           seen : false,
           user : userId,

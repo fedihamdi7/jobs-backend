@@ -10,6 +10,7 @@ export enum UserRole {
 }
 
 export class UserAppliedNotification{
+    _id : Types.ObjectId;
     message : string;
     createdAt : Date;
     seen : boolean;
