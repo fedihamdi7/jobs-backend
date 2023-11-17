@@ -50,6 +50,7 @@ export class CreateUserDto {
         twitter: string;
         instagram: string;
         website: string;
+        location: string;
     };
 
     @IsOptional()

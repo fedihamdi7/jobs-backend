@@ -75,6 +75,7 @@ export class UserAppliedNotification{
             twitter: { type: String, default: null },
             instagram: { type: String, default: null },
             website: { type: String, default: null },
+            location : {type : String, default : null}
         },
         default: {},
     })
@@ -86,6 +87,7 @@ export class UserAppliedNotification{
         twitter: string;
         instagram: string;
         website: string;
+        location : string;
     };
 
     @Prop({type : Types.ObjectId, ref : 'Post',default : []})

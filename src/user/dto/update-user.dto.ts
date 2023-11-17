@@ -21,6 +21,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
         twitter: string;
         instagram: string;
         website: string;
+        location: string;
     };
     isVerified?: boolean;
     posts?: Types.ObjectId[];
