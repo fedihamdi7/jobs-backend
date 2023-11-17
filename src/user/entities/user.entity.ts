@@ -94,7 +94,7 @@ export class UserAppliedNotification{
     savedPosts : Types.ObjectId[];
 
     @Prop({default : []})
-    notifications: any[];
+    notifications: UserAppliedNotification[];
 
 }
 

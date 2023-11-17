@@ -79,7 +79,17 @@ export class PostService {
       // Post is not applied yet, apply to it
       await this.userModel.findByIdAndUpdate(userId, { $push: { postsAppliedIn: new Types.ObjectId(postId) } });
       await this.postModel.findByIdAndUpdate(postId, { $inc: { applicants: 1 } });
-      await this.addNotificaiton({type : 'user-applied', user : userId, post : postId},userId);
+      //get the company id 
+      const post = await this.postModel.findById(postId);
+      const companyId = post.company;
+      await this.addNotificaiton(
+        {
+          message : "New applicant to your post",
+          seen : false,
+          user : userId,
+          post : postId
+        },
+        companyId.toString());
       return { message: 'Applied to post successfully' };
     } else {
       // Post is already applied, unapply to it
@@ -97,6 +107,11 @@ export class PostService {
   }
   
   async addNotificaiton(notification: any, userId: string) {
+    // add a createdAt to the notification that have new Date() but add an hour
+    notification.createdAt = new Date();
+    notification.createdAt.setHours(notification.createdAt.getHours() + 1);
+
+    
     const user = await this.userModel.findByIdAndUpdate(userId, { $push: { notifications: notification } }, { new: true });
     if(userId === this.connectedUserId){
       this.notifications.next(JSON.stringify({userId, notifications : [user.notifications]}));

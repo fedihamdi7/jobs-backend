@@ -59,5 +59,5 @@ export class CreateUserDto {
     savedPosts : Types.ObjectId[];
 
     @IsEmpty()
-    notifications: any[];
+    notifications: UserAppliedNotification[];
 }
