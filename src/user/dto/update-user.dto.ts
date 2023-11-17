@@ -24,5 +24,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     };
     isVerified?: boolean;
     posts?: Types.ObjectId[];
+    notifications?: any[];
     
 }

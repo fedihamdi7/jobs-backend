@@ -41,7 +41,7 @@ export class Post {
     @Prop()
     views: number;
 
-    @Prop()
+    @Prop({default: 0})
     applicants: number;
 
     @Prop()

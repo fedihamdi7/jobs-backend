@@ -8,6 +8,14 @@ export enum UserRole {
     USER = 'user',
     COMPANY = 'company',
 }
+
+export class UserAppliedNotification{
+    message : string;
+    createdAt : Date;
+    seen : boolean;
+    user : Types.ObjectId;
+    post : Types.ObjectId;
+}
 @Schema()
  export class User {
 
@@ -84,6 +92,9 @@ export enum UserRole {
 
     @Prop({type : Types.ObjectId, ref : 'Post', default : []})
     savedPosts : Types.ObjectId[];
+
+    @Prop({default : []})
+    notifications: any[];
 
 }
 

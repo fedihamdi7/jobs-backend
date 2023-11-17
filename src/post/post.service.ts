@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Post } from './entities/post.entity';
 import { Model, Types } from 'mongoose';
 import { User } from 'src/user/entities/user.entity';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class PostService {
@@ -78,10 +79,34 @@ export class PostService {
       // Post is not applied yet, apply to it
       await this.userModel.findByIdAndUpdate(userId, { $push: { postsAppliedIn: new Types.ObjectId(postId) } });
       await this.postModel.findByIdAndUpdate(postId, { $inc: { applicants: 1 } });
+      await this.addNotificaiton({type : 'user-applied', user : userId, post : postId},userId);
       return { message: 'Applied to post successfully' };
     } else {
       // Post is already applied, unapply to it
       throw new BadRequestException('Already applied to this post');
     }
   }
+
+
+  private connectedUserId : string;
+  private notifications = new Subject<any>()  ;
+  async getNotificationStream(connectedUserId: string) {
+    this.connectedUserId = connectedUserId;
+    this.getUserNotifications(connectedUserId);
+    return this.notifications;
+  }
+  
+  async addNotificaiton(notification: any, userId: string) {
+    const user = await this.userModel.findByIdAndUpdate(userId, { $push: { notifications: notification } }, { new: true });
+    if(userId === this.connectedUserId){
+      this.notifications.next(JSON.stringify({userId, notifications : [user.notifications]}));
+    }
+  }
+  
+  async getUserNotifications(userId: string) {
+    const user = await this.userModel.findById(userId);
+    this.notifications.next(JSON.stringify({userId, notifications : [user.notifications]}));
+  }
+
+
 }

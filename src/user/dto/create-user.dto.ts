@@ -1,5 +1,6 @@
-import { IsEmail, IsNotEmpty, IsDate, MinLength, MaxLength, IsOptional } from "class-validator";
+import { IsEmail, IsNotEmpty, IsDate, MinLength, MaxLength, IsOptional, IsEmpty } from "class-validator";
 import { Types } from "mongoose";
+import { UserAppliedNotification } from "../entities/user.entity";
 
 export class CreateUserDto {
 
@@ -56,4 +57,7 @@ export class CreateUserDto {
 
     @IsOptional()
     savedPosts : Types.ObjectId[];
+
+    @IsEmpty()
+    notifications: any[];
 }

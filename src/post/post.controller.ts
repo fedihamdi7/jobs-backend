@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, UseGuards, Sse, Req } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from 'src/guards/roles.guard';
+import { Subject } from 'rxjs';
+import { Request } from 'express';
 
 //TODO : add roles guard to links 
 @Controller('post')
@@ -57,5 +59,19 @@ export class PostController {
   applyToPost(@Param('post_id') postId: string, @Headers('user_id') userId: string) {
     return this.postService.applyToPost(postId, userId);
   }
+
+
+  @Get('notification/stream')
+  @Sse()
+  @Roles('user','company','admin')
+  //TODO : interface RequestWithUser extends Request {user : any}
+  stream(@Req() req : any){
+    
+    return this.postService.getNotificationStream(req.user.id);
+  }
+
+
+
+
 
 }
