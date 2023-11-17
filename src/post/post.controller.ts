@@ -18,6 +18,7 @@ export class PostController {
   }
 
   @Get()
+  @Roles('user','company','admin')
   findAll() {
     return this.postService.findAll();
   }
@@ -45,7 +46,16 @@ export class PostController {
 
   //add a post to saved posts of a user
   @Post('save/:id')
-  savePost(@Param('id') id: string, @Headers('user_id') userId: string) {
+  @Roles('user')
+  saveUnsavePost(@Param('id') id: string, @Headers('user_id') userId: string) {
     return this.postService.savePost(id, userId);
   }
+
+  // user applyinh to a post
+  @Post('apply/:post_id')
+  @Roles('user')
+  applyToPost(@Param('post_id') postId: string, @Headers('user_id') userId: string) {
+    return this.postService.applyToPost(postId, userId);
+  }
+
 }

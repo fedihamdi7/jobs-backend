@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,7 +12,7 @@ export class PostService {
   constructor(
     @InjectModel('Post') private readonly postModel: Model<Post>,
     @InjectModel('User') private readonly userModel: Model<User>,
-  ) {}
+  ) { }
 
   async create(createPostDto: CreatePostDto, userId: string) {
     createPostDto.company = new Types.ObjectId(userId);
@@ -41,27 +41,47 @@ export class PostService {
   }
 
   async findAllPostsOfUser(id: string) {
-    const user : any = await this.userModel.findById(id).populate('posts');   
+    const user: any = await this.userModel.findById(id).populate('posts');
     return user.posts;
 
   }
 
   async savePost(id: string, userId: string) {
     const user = await this.userModel.findById(userId);
-  const savedPosts = user.savedPosts.map(post => post.toString());
-  const postIndex = savedPosts.indexOf(id); 
+    const savedPosts = user.savedPosts.map(post => post.toString());
+    const postIndex = savedPosts.indexOf(id);
 
-  if (postIndex === -1) {
-    // Post is not saved yet, save it
-    await this.userModel.findByIdAndUpdate(userId, { $push: { savedPosts: new Types.ObjectId(id) } });
-    await this.postModel.findByIdAndUpdate(id, { $inc: { numberOfSaved: 1 } });
-    return { message: 'Post saved successfully' };
-  } else {
-    // Post is already saved, unsave it
-    await this.userModel.findByIdAndUpdate(userId, { $pull: { savedPosts: new Types.ObjectId(id) } });
-    await this.postModel.findByIdAndUpdate(id, { $inc: { numberOfSaved: -1 } });
-    return { message: 'Post unsaved successfully' };
+    if (postIndex === -1) {
+      // Post is not saved yet, save it
+      await this.userModel.findByIdAndUpdate(userId, { $push: { savedPosts: new Types.ObjectId(id) } });
+      await this.postModel.findByIdAndUpdate(id, { $inc: { numberOfSaved: 1 } });
+      return { message: 'Post saved successfully' };
+    } else {
+      // Post is already saved, unsave it
+      await this.userModel.findByIdAndUpdate(userId, { $pull: { savedPosts: new Types.ObjectId(id) } });
+      await this.postModel.findByIdAndUpdate(id, { $inc: { numberOfSaved: -1 } });
+      return { message: 'Post unsaved successfully' };
+    }
+
   }
 
+
+  async applyToPost(postId: string, userId: string) {
+    const user = await this.userModel.findById(userId);
+    
+ 
+    const appliedPosts =  user.postsAppliedIn?.map(post => post.toString());
+    
+    const postIndex = appliedPosts?.indexOf(postId);
+
+    if (postIndex === -1) {
+      // Post is not applied yet, apply to it
+      await this.userModel.findByIdAndUpdate(userId, { $push: { postsAppliedIn: new Types.ObjectId(postId) } });
+      await this.postModel.findByIdAndUpdate(postId, { $inc: { applicants: 1 } });
+      return { message: 'Applied to post successfully' };
+    } else {
+      // Post is already applied, unapply to it
+      throw new BadRequestException('Already applied to this post');
+    }
   }
 }
