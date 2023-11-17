@@ -5,6 +5,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from 'src/guards/roles.guard';
 
+//TODO : add roles guard to links 
 @Controller('post')
 @UseGuards(AuthGuard('jwt'),RolesGuard)
 @Roles('company')
@@ -36,7 +37,7 @@ export class PostController {
     return this.postService.remove(id);
   }
 
-  //get all posts of a user
+  //get all posts of a company
   @Get('user/:id')
   findAllPostsOfUser(@Param('id') id: string) {
     return this.postService.findAllPostsOfUser(id);
