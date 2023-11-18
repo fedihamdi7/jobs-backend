@@ -81,13 +81,13 @@ export class PostService {
       //get the company id 
       const post = await this.postModel.findById(postId);
       const companyId = post.company;
-      await this.addNotificaiton(
+      await this.addNotification(
         {
           _id : new Types.ObjectId(),
           message : "New applicant to your post",
           seen : false,
-          user : userId,
-          post : postId
+          user : new Types.ObjectId(userId),
+          post : new Types.ObjectId(postId),
         },
         companyId.toString()
         );
@@ -113,29 +113,41 @@ export class PostService {
   }
 
 
-  private connectedUserId : string;
-  private notifications = new Subject<any>()  ;
-  async getNotificationStream(connectedUserId: string) {
-    this.connectedUserId = connectedUserId;
+  private notificationStreams = new Map<string, Subject<any>>();
+
+
+  getNotificationStream(connectedUserId: string): Subject<any> {
+    if (!this.notificationStreams.has(connectedUserId)) {
+      this.notificationStreams.set(connectedUserId, new Subject<any>());
+    }
     this.getUserNotifications(connectedUserId);
-    return this.notifications;
+
+    return this.notificationStreams.get(connectedUserId);
   }
   
-  async addNotificaiton(notification: any, userId: string) {
-    // add a createdAt to the notification that have new Date() but add an hour
+  async addNotification(notification: any, userId: string) {
     notification.createdAt = new Date();
     notification.createdAt.setHours(notification.createdAt.getHours() + 1);
 
-    
-    const user = await this.userModel.findByIdAndUpdate(userId, { $push: { notifications: notification } }, { new: true });
-    if(userId === this.connectedUserId){
-      this.notifications.next(JSON.stringify({userId, notifications : [user.notifications]}));
+    const user = await this.userModel.findByIdAndUpdate(
+      userId,
+      { $push: { notifications: notification } },
+      { new: true }
+    );
+    const userStream = this.notificationStreams.get(userId);
+
+    if (userStream) {
+      userStream.next(JSON.stringify({ userId, notifications: [user.notifications] }));
     }
-  }
+  } 
   
   async getUserNotifications(userId: string) {
     const user = await this.userModel.findById(userId);
-    this.notifications.next(JSON.stringify({userId, notifications : [user.notifications]}));
+    const userStream = this.notificationStreams.get(userId);
+
+    if (userStream) {
+      userStream.next(JSON.stringify({ userId, notifications: [user.notifications] }));
+    }
   }
 
 
