@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Req, UseGuards } from '@nestjs/common';
 import { NegotiationService } from './negotiation.service';
 import { CreateNegotiationDto } from './dto/create-negotiation.dto';
 import { UpdateNegotiationDto } from './dto/update-negotiation.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('negotiation')
+@UseGuards(AuthGuard('jwt'))
 export class NegotiationController {
   constructor(private readonly negotiationService: NegotiationService) {}
 
@@ -33,7 +35,7 @@ export class NegotiationController {
   }
 
   @Post('accept/:negotiation_id')
-  accept(@Param('negotiation_id') negotiation_id: string,@Req() req){
+  accept(@Param('negotiation_id') negotiation_id: string,@Req() req : any){
     console.log(req.user);
     // TODO : test this
     // return this.negotiationService.accept(negotiation_id);

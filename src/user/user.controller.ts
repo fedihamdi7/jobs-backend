@@ -6,7 +6,7 @@ import { FileUploadInterceptor } from 'src/interceptors/file-upload.interceptor'
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
-@UseGuards(AuthGuard())
+@UseGuards(AuthGuard('jwt'))
 export class UserController {
 
   constructor(private readonly userService: UserService) {}
