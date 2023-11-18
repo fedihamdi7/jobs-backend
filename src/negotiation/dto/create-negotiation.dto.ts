@@ -36,7 +36,7 @@ export class CreateNegotiationDto {
     @IsEmpty()
     creationDate? : Date;
 
-    @IsOptional()
-    confirmations? : {user : boolean,company : boolean}
+    // @IsOptional()
+    // confirmations? : {user : boolean,company : boolean}
 
 }

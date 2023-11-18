@@ -5,7 +5,8 @@ export enum StatusType {
     PENDING = 'PENDING',
     ACCEPTED = 'ACCEPTED',
     REJECTED = 'REJECTED',
-    PENDING_CONFIRMATION = 'PENDING_CONFIRMATION',
+    PENDING_USER_CONFIRMATION = 'PENDING_USER_CONFIRMATION',
+    PENDING_COMPANY_CONFIRMATION = 'PENDING_COMPANY_CONFIRMATION',
 }
 
 export enum WhereType {
@@ -28,14 +29,14 @@ export class Negotiation {
     @Prop({ default: StatusType.PENDING })
     status: string;
 
-    @Prop({ type: { when: Date, where: String } })
-    dateFromTheCompany: { when: Date, where: WhereType };
+    @Prop({ type: {_id : false, when: Date, where: String } })
+    dateFromTheCompany: { when: Date, where: String };
 
-    @Prop({ type: { when: Date, where: String } })
+    @Prop({ type: {_id : false, when: Date, where: String } })
     dateFromTheUser: { when: Date, where: String };
 
-    @Prop({ type: { when: Date, where: String } })
-    agreedOnDate: { when: Date, where: WhereType };
+    @Prop({ type: {_id : false, when: Date, where: String } })
+    agreedOnDate: { when: Date, where: String };
 
     @Prop()
     link: string;
@@ -57,8 +58,11 @@ export class Negotiation {
     )
     creationDate: Date;
 
-    @Prop({type :{user : Boolean,company : Boolean} , default: {user : false,company : false}})
-    confirmations : {user : boolean,company : boolean}
+    // @Prop({type :{_id: false, user : Boolean,company : Boolean} , default: {user : false,company : false}})
+    // confirmations : {user : boolean,company : boolean}
+
+    // @Prop({type : Boolean, default: false})
+    // requestingChanges : Boolean
 
 }
 
