@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Req } from '@nestjs/common';
 import { NegotiationService } from './negotiation.service';
 import { CreateNegotiationDto } from './dto/create-negotiation.dto';
 import { UpdateNegotiationDto } from './dto/update-negotiation.dto';
@@ -31,4 +31,12 @@ export class NegotiationController {
   remove(@Param('id') id: string) {
     return this.negotiationService.remove(id);
   }
+
+  @Post('accept/:negotiation_id')
+  accept(@Param('negotiation_id') negotiation_id: string,@Req() req){
+    console.log(req.user);
+    // TODO : test this
+    // return this.negotiationService.accept(negotiation_id);
+  }
+
 }

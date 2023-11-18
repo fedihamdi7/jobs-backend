@@ -1,18 +1,19 @@
-import { IsEmpty, IsOptional } from "class-validator";
+import { IsEmpty, IsNotEmpty, IsOptional } from "class-validator";
+import { Types } from "mongoose";
 
 export class CreateNegotiationDto {
 
-    @IsEmpty()
-    user_id: string;
+    @IsNotEmpty()
+    user_id: Types.ObjectId | string;
 
-    @IsEmpty()
-    company_id : string;
+    @IsNotEmpty()
+    company_id : Types.ObjectId;
 
-    @IsEmpty()
-    post_id : string;
+    @IsNotEmpty()
+    post_id : Types.ObjectId | string;
 
-    @IsEmpty()
-    state : string;
+    @IsOptional()
+    status : string;
 
     @IsOptional()
     dateFromTheCompany: {when : Date, where: string};
@@ -33,6 +34,9 @@ export class CreateNegotiationDto {
     additionalInfoUser : string;
 
     @IsEmpty()
-    creationDate : Date;
+    creationDate? : Date;
+
+    @IsOptional()
+    confirmations? : {user : boolean,company : boolean}
 
 }

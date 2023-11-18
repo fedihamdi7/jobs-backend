@@ -6,6 +6,7 @@ import { Post } from './entities/post.entity';
 import { Model, Types } from 'mongoose';
 import { User } from 'src/user/entities/user.entity';
 import { Subject } from 'rxjs';
+import { NegotiationService } from 'src/negotiation/negotiation.service';
 
 @Injectable()
 export class PostService {
@@ -13,6 +14,7 @@ export class PostService {
   constructor(
     @InjectModel('Post') private readonly postModel: Model<Post>,
     @InjectModel('User') private readonly userModel: Model<User>,
+    private readonly negotiationService : NegotiationService
   ) { }
 
   async create(createPostDto: CreatePostDto, userId: string) {
@@ -69,10 +71,7 @@ export class PostService {
 
   async applyToPost(postId: string, userId: string) {
     const user = await this.userModel.findById(userId);
-    
- 
     const appliedPosts =  user.postsAppliedIn?.map(post => post.toString());
-    
     const postIndex = appliedPosts?.indexOf(postId);
 
     if (postIndex === -1) {
@@ -90,7 +89,22 @@ export class PostService {
           user : userId,
           post : postId
         },
-        companyId.toString());
+        companyId.toString()
+        );
+      this.negotiationService.create(
+        {
+          user_id : userId,
+          company_id : companyId,
+          post_id : postId,
+          status : "PENDING",
+          dateFromTheCompany : {when : null, where : null},
+          dateFromTheUser : {when : null, where : null},
+          agreedOnDate : {when : null, where : null},
+          link : null,
+          additionalInfoCompany : null,
+          additionalInfoUser : null,
+        }
+      )
       return { message: 'Applied to post successfully' };
     } else {
       // Post is already applied, unapply to it

@@ -1,13 +1,14 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Types } from "mongoose";
+import { Document, Types } from "mongoose";
 
-export enum StateType{
+export enum StatusType {
     PENDING = 'PENDING',
     ACCEPTED = 'ACCEPTED',
-    REJECTED = 'REJECTED'
+    REJECTED = 'REJECTED',
+    PENDING_CONFIRMATION = 'PENDING_CONFIRMATION',
 }
 
-export enum WhereType{
+export enum WhereType {
     ONLINE = 'online',
     ONSITE = 'onsite'
 }
@@ -15,44 +16,49 @@ export enum WhereType{
 @Schema()
 export class Negotiation {
 
-    @Prop()
+    @Prop({type: Types.ObjectId, ref: 'User'})
     user_id: Types.ObjectId;
 
-    @Prop()
-    company_id : Types.ObjectId;
+    @Prop({type: Types.ObjectId, ref: 'User'})
+    company_id: Types.ObjectId;
+
+    @Prop({type: Types.ObjectId, ref: 'Post'})
+    post_id: Types.ObjectId;
+
+    @Prop({ default: StatusType.PENDING })
+    status: string;
+
+    @Prop({ type: { when: Date, where: String } })
+    dateFromTheCompany: { when: Date, where: WhereType };
+
+    @Prop({ type: { when: Date, where: String } })
+    dateFromTheUser: { when: Date, where: String };
+
+    @Prop({ type: { when: Date, where: String } })
+    agreedOnDate: { when: Date, where: WhereType };
 
     @Prop()
-    post_id : Types.ObjectId;
-
-    @Prop({default: StateType.PENDING})
-    state : StateType;
+    link: string;
 
     @Prop()
-    dateFromTheCompany: {when : Date, where: WhereType};
+    additionalInfoCompany: string;
 
     @Prop()
-    dateFromTheUser: {when : Date, where: WhereType};
-
-    @Prop()
-    agreedOnDate: {when : Date, where: WhereType};
-
-    @Prop()
-    link : string;
-
-    @Prop()
-    additionalInfoCompany : string;
-
-    @Prop()
-    additionalInfoUser : string;
+    additionalInfoUser: string;
 
     @Prop(
-        {default: () => {
-            let date = new Date();
-            date.setHours(date.getHours() + 1);
-            return date;
-        }}
+        {
+            default: () => {
+                let date = new Date();
+                date.setHours(date.getHours() + 1);
+                return date;
+            }
+        }
     )
-    creationDate : Date;
+    creationDate: Date;
+
+    @Prop({type :{user : Boolean,company : Boolean} , default: {user : false,company : false}})
+    confirmations : {user : boolean,company : boolean}
 
 }
 

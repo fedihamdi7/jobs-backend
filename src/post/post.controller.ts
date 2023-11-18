@@ -54,6 +54,7 @@ export class PostController {
   }
 
   // user applyinh to a post
+  // TODO : move this to negotiation controller
   @Post('apply/:post_id')
   @Roles('user')
   applyToPost(@Param('post_id') postId: string, @Headers('user_id') userId: string) {
