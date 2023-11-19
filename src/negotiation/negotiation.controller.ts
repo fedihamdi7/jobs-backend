@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Req, UseGuards, Sse } from '@nestjs/common';
 import { NegotiationService } from './negotiation.service';
 import { CreateNegotiationDto } from './dto/create-negotiation.dto';
 import { UpdateNegotiationDto } from './dto/update-negotiation.dto';
@@ -42,12 +42,19 @@ export class NegotiationController {
 
   @Post('reject/')
   reject(@Req() req : any, @Body() negotiation: NegotiationDocument){
+    
     return this.negotiationService.reject(req.user,negotiation);
   }
 
   @Post('requestChanges/')
   requestChanges(@Req() req : any, @Body() negotiation: NegotiationDocument){
     return this.negotiationService.requestChanges(req.user,negotiation);
+  }
+
+  @Get('notification/stream')
+  @Sse()
+  stream(@Req() req : any){
+    return this.negotiationService.getNotifications(req.user.id);
   }
 
 }

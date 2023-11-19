@@ -9,6 +9,12 @@ export enum UserRole {
     COMPANY = 'company',
 }
 
+export enum NotificationType{
+    POST_APPLIED = 'post_applied',
+    WAITING_YOUR_RESPONSE = 'waiting_your_response',
+    REQUEST_CHANGES = 'request_changes',
+}
+
 export class UserAppliedNotification{
     _id : Types.ObjectId;
     message : string;

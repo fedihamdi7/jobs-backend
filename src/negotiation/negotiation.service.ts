@@ -5,13 +5,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { NegotiationDocument, StatusType } from './entities/negotiation.entity';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from 'src/user/entities/user.entity';
-import { Type } from 'class-transformer';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class NegotiationService {
 
   constructor(
     @InjectModel('Negotiation') private readonly negotiationModel: Model<NegotiationDocument>,
+    @InjectModel('User') private readonly userModel: Model<User>,
+
   ) { }
 
   async create(createNegotiationDto: CreateNegotiationDto) {
@@ -105,10 +107,23 @@ export class NegotiationService {
   async reject(user: UserDocument, negotiation: NegotiationDocument) {
 
     await this.handleAuthorization(user, negotiation);
+    negotiation.status = StatusType.REJECTED
+    negotiation.user_id = new Types.ObjectId(negotiation.user_id);
+    negotiation.company_id = new Types.ObjectId(negotiation.company_id);
+    negotiation.post_id = new Types.ObjectId(negotiation.post_id);
 
-    this.negotiationModel.findByIdAndUpdate(negotiation._id, { status: StatusType.REJECTED });
-    return { message: 'Negotiation rejected' }
-
+    await this.addNotification(
+      {
+        _id : new Types.ObjectId(),
+        message : "Your application has been rejected",
+        seen : false,
+        user : new Types.ObjectId(negotiation.user_id),
+        post : new Types.ObjectId(negotiation.post_id),
+      },
+      negotiation.user_id.toString()
+      );    
+    return this.negotiationModel.findByIdAndUpdate(negotiation._id, negotiation,{new : true});
+    
   }
 
   // HANDLE AUTHORIZATION
@@ -131,5 +146,46 @@ export class NegotiationService {
       }
     }
 
+  }
+
+
+
+
+  // NOTIFICATIONS
+  private notificationStreams = new Map<string, Subject<any>>();
+
+  async getNotifications(connectedUserId: string) {
+    if (!this.notificationStreams.has(connectedUserId)) {
+      this.notificationStreams.set(connectedUserId, new Subject<any>());
+    }
+    this.getUserNotifications(connectedUserId);
+
+    return this.notificationStreams.get(connectedUserId);
+  }
+
+  async addNotification(notification: any, userId: string) {
+    notification.createdAt = new Date();
+    notification.createdAt.setHours(notification.createdAt.getHours() + 1);
+    
+    const user = await this.userModel.findByIdAndUpdate(
+      userId.toString(),
+      { $push: { notifications: notification } },
+      { new: true }
+    );
+    const userStream = this.notificationStreams.get(userId.toString());
+
+    if (userStream) {
+      userStream.next(JSON.stringify({ userId, notifications: [user.notifications] }));
+    }
+  } 
+
+
+  async getUserNotifications(userId: string) {
+    const user = await this.userModel.findById(userId);
+    const userStream = this.notificationStreams.get(userId);
+
+    if (userStream) {
+      userStream.next(JSON.stringify({ userId, notifications: [user.notifications] }));
+    }
   }
 }
