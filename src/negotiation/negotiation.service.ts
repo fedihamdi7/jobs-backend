@@ -55,12 +55,32 @@ export class NegotiationService {
     if (user.role === 'company') {
       if (negotiation.status === StatusType.PENDING) {
 
-        negotiation.status = StatusType.PENDING_USER_CONFIRMATION
+        negotiation.status = StatusType.PENDING_USER_CONFIRMATION;
+        await this.addNotification(
+          {
+            _id: new Types.ObjectId(),
+            message: "Your application has been accepted, waiting for your confirmation",
+            seen: false,
+            user: new Types.ObjectId(negotiation.user_id),
+            post: new Types.ObjectId(negotiation.post_id),
+          },
+          negotiation.user_id.toString()
+        );
       }
       else if (negotiation.status === StatusType.PENDING_COMPANY_CONFIRMATION) {
 
         negotiation.agreedOnDate = negotiation.dateFromTheUser;
         negotiation.status = StatusType.ACCEPTED;
+        await this.addNotification(
+          {
+            _id: new Types.ObjectId(),
+            message: "Company confirmed the application, good luck",
+            seen: false,
+            user: new Types.ObjectId(negotiation.user_id),
+            post: new Types.ObjectId(negotiation.post_id),
+          },
+          negotiation.user_id.toString()
+        );
 
       }
     }
@@ -69,6 +89,16 @@ export class NegotiationService {
 
         negotiation.agreedOnDate = negotiation.dateFromTheCompany;
         negotiation.status = StatusType.ACCEPTED;
+        await this.addNotification(
+          {
+            _id: new Types.ObjectId(),
+            message: "Your applicant confirmed",
+            seen: false,
+            user: new Types.ObjectId(negotiation.user_id),
+            post: new Types.ObjectId(negotiation.post_id),
+          },
+          negotiation.company_id.toString()
+        );
 
       }
     }
@@ -92,10 +122,30 @@ export class NegotiationService {
     if (user.role === 'user') {
       if (negotiation.status === StatusType.PENDING_USER_CONFIRMATION) {
         negotiation.status = StatusType.PENDING_COMPANY_CONFIRMATION;
+        await this.addNotification(
+          {
+            _id : new Types.ObjectId(),
+            message : "Your applicant requested changes",
+            seen : false,
+            user : new Types.ObjectId(negotiation.user_id),
+            post : new Types.ObjectId(negotiation.post_id),
+          },
+          negotiation.company_id.toString()
+          ); 
       }
     } else {
       if (negotiation.status === StatusType.PENDING_COMPANY_CONFIRMATION) {
         negotiation.status = StatusType.PENDING_USER_CONFIRMATION;
+        await this.addNotification(
+          {
+            _id : new Types.ObjectId(),
+            message : "Your company requested changes",
+            seen : false,
+            user : new Types.ObjectId(negotiation.user_id),
+            post : new Types.ObjectId(negotiation.post_id),
+          },
+          negotiation.user_id.toString()
+          ); 
       }
     }
     const savedNegotiation = await this.negotiationModel.findByIdAndUpdate({ _id: new Types.ObjectId(negotiation._id) }, negotiation, { new: true });
@@ -114,16 +164,16 @@ export class NegotiationService {
 
     await this.addNotification(
       {
-        _id : new Types.ObjectId(),
-        message : "Your application has been rejected",
-        seen : false,
-        user : new Types.ObjectId(negotiation.user_id),
-        post : new Types.ObjectId(negotiation.post_id),
+        _id: new Types.ObjectId(),
+        message: "Your application has been rejected",
+        seen: false,
+        user: new Types.ObjectId(negotiation.user_id),
+        post: new Types.ObjectId(negotiation.post_id),
       },
       negotiation.user_id.toString()
-      );    
-    return this.negotiationModel.findByIdAndUpdate(negotiation._id, negotiation,{new : true});
-    
+    );
+    return this.negotiationModel.findByIdAndUpdate(negotiation._id, negotiation, { new: true });
+
   }
 
   // HANDLE AUTHORIZATION
@@ -166,7 +216,7 @@ export class NegotiationService {
   async addNotification(notification: any, userId: string) {
     notification.createdAt = new Date();
     notification.createdAt.setHours(notification.createdAt.getHours() + 1);
-    
+
     const user = await this.userModel.findByIdAndUpdate(
       userId.toString(),
       { $push: { notifications: notification } },
@@ -177,7 +227,7 @@ export class NegotiationService {
     if (userStream) {
       userStream.next(JSON.stringify({ userId, notifications: [user.notifications] }));
     }
-  } 
+  }
 
 
   async getUserNotifications(userId: string) {
