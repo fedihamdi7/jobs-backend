@@ -128,10 +128,11 @@ export class PostService {
   async addNotification(notification: any, userId: string) {
     notification.createdAt = new Date();
     notification.createdAt.setHours(notification.createdAt.getHours() + 1);
-
+   
+    // $slice limit the array to 50 elements and $position is where to put the new entry
     const user = await this.userModel.findByIdAndUpdate(
       userId,
-      { $push: { notifications: notification } },
+      { $push: { notifications: { $each: [notification], $position: 0 , $slice : -50} } },
       { new: true }
     );
     const userStream = this.notificationStreams.get(userId);
