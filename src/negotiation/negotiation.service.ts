@@ -48,10 +48,8 @@ export class NegotiationService {
   async accept(user: UserDocument, negotiation: NegotiationDocument) {
 
     await this.handleAuthorization(user, negotiation);
+    await this.stringToObjectId(negotiation);
 
-    negotiation.user_id = new Types.ObjectId(negotiation.user_id);
-    negotiation.company_id = new Types.ObjectId(negotiation.company_id);
-    negotiation.post_id = new Types.ObjectId(negotiation.post_id);
     if (user.role === 'company') {
       if (negotiation.status === StatusType.PENDING) {
 
@@ -115,9 +113,7 @@ export class NegotiationService {
 
     await this.handleAuthorization(user, negotiation);
 
-    negotiation.user_id = new Types.ObjectId(negotiation.user_id);
-    negotiation.company_id = new Types.ObjectId(negotiation.company_id);
-    negotiation.post_id = new Types.ObjectId(negotiation.post_id);
+    await this.stringToObjectId(negotiation);
 
     if (user.role === 'user') {
       if (negotiation.status === StatusType.PENDING_USER_CONFIRMATION) {
@@ -153,14 +149,19 @@ export class NegotiationService {
 
   }
 
+   private async stringToObjectId(negotiation: NegotiationDocument) {
+    negotiation.user_id = new Types.ObjectId(negotiation.user_id);
+    negotiation.company_id = new Types.ObjectId(negotiation.company_id);
+    negotiation.post_id = new Types.ObjectId(negotiation.post_id);
+  }
+
   // REJECT REQUEST
   async reject(user: UserDocument, negotiation: NegotiationDocument) {
 
     await this.handleAuthorization(user, negotiation);
     negotiation.status = StatusType.REJECTED
-    negotiation.user_id = new Types.ObjectId(negotiation.user_id);
-    negotiation.company_id = new Types.ObjectId(negotiation.company_id);
-    negotiation.post_id = new Types.ObjectId(negotiation.post_id);
+    await this.stringToObjectId(negotiation);
+
 
     await this.addNotification(
       {
@@ -184,7 +185,6 @@ export class NegotiationService {
     if (negotiation.status === StatusType.REJECTED) {
       throw new BadRequestException('Negotiation already rejected');
     }
-
 
     if (user.role === 'company') {
       if (negotiation.company_id != user._id) {
