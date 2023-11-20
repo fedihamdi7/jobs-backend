@@ -43,6 +43,12 @@ export class AuthService {
   }
 
   async create(createUserDto: CreateUserDto, profilePic?: Express.Multer.File, resume?: Express.Multer.File) {
+      
+    //check if email already exists
+    const user = await this.userService.findByEmail(createUserDto.email);
+    if (user) {
+      throw new BadRequestException('Email already exists');
+    }
 
     if (typeof createUserDto.links === 'string') {
       try {
@@ -87,7 +93,7 @@ export class AuthService {
     await user.save();
     await this.verificationTokenModel.deleteOne({ token });
 
-    return { message: 'User verified' };
+    return { message: 'User verified' , code : 200};
   }
 
   sendMail(to: string, from: string, subject: string, text: string, token: string) {
