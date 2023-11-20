@@ -59,12 +59,8 @@ export class UserAppliedNotification{
     @Prop()
     nationality: string;
 
-    @Prop(
-        {
-            type: Date,
-        }
-    )
-    birthDate: Date;
+    @Prop()
+    birthDate: string;
 
     @Prop()
     governorate: string;

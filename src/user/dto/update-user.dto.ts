@@ -8,7 +8,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     password?: string;    
     profilePic?: string;
     role?: string;
-    phone?: number;
+    phone?: string;
     adresse?: string;
     nationality?: string;
     birthDate?: Date;
