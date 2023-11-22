@@ -22,20 +22,23 @@ export class AuthService {
 
   async login(email: string, password: string) {
     
-    const user: any = await this.userService.findByEmail(email);
+    let user: any = await this.userService.findByEmail(email);
     if (!user) {
-      return { message: 'Invalid credentials email' };
+      return { message: 'Invalid credentials', code : 401 };
     }
     if (!await bcrypt.compare(password, user.password)) {
-      return { message: 'Invalid credentials pwd' };
+      return { message: 'Invalid credentials', code : 401 };
     }
 
     if (!user.isVerified) {
-      return { message: 'User not verified' };
+      return { message: 'User not verified', code : 401 };
     }
     const payload = { id: user._id };
     const token = await this.generateToken(payload);
-    return { user, token };
+    //remove password from the user object 
+    user = user.toObject();
+    delete user.password;
+    return { user, token, code :200 };
   }
 
   async generateToken(payload: { id: string }): Promise<string> {
