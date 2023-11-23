@@ -27,7 +27,7 @@ export class PostService {
   }
 
   findAll() {
-    return this.postModel.find();
+    return this.postModel.find().populate('company');
   }
 
   findOne(id: string) {
