@@ -18,7 +18,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: 'secret',
-      signOptions: { expiresIn: '24h' },
+      // TODO :       signOptions: { expiresIn: '24h' }, and check in the front end for it and logout the user
+      signOptions: {},
     }),
     forwardRef(() => UserModule),
     MailerModule.forRoot({
