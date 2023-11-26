@@ -32,6 +32,13 @@ export class NegotiationService {
     return this.negotiationModel.find();
   }
 
+  async getNegotiationsByUser(userId: any) {
+    const negotiations = await this.negotiationModel.find({ user_id: userId }).populate({ path: 'company_id', select: 'name' }).populate('post_id');
+    // get the first element of the array
+    
+    return negotiations;
+  }
+
   findOne(id: string) {
     return this.negotiationModel.findById(id);
   }

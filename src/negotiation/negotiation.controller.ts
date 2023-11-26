@@ -4,6 +4,7 @@ import { CreateNegotiationDto } from './dto/create-negotiation.dto';
 import { UpdateNegotiationDto } from './dto/update-negotiation.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { NegotiationDocument } from './entities/negotiation.entity';
+import { Types } from 'mongoose';
 
 @Controller('negotiation')
 @UseGuards(AuthGuard('jwt'))
@@ -18,6 +19,13 @@ export class NegotiationController {
   @Get()
   findAll() {
     return this.negotiationService.findAll();
+  }
+
+  @Get('/getNegotiationsByUser')
+  getNegotiationsByUser(@Req() req : any){
+    const id = new Types.ObjectId(req.user.id)
+  
+    return this.negotiationService.getNegotiationsByUser(id);
   }
 
   @Get(':id')
