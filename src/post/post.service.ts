@@ -27,7 +27,7 @@ export class PostService {
   }
 
   findAll() {
-    return this.postModel.find().populate('company');
+    return this.postModel.find().populate('company').sort({ dateOfCreation: -1 });;
   }
 
   findOne(id: string) {
@@ -44,9 +44,13 @@ export class PostService {
   }
 
   async findAllPostsOfUser(id: string) {
-    const user: any = await this.userModel.findById(id).populate('posts');
-    return user.posts;
-
+    const user: any = await this.userModel.findById(id);
+    const populatedPosts = await Promise.all(
+      user.posts.map(async (postId) => {
+        return await this.postModel.findById(postId).exec();
+      })
+    );    
+    return populatedPosts;
   }
 
   async savePost(id: string, userId: string) {

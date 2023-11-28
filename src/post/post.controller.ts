@@ -15,8 +15,8 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
-  create(@Body() createPostDto: CreatePostDto,@Headers('user_id') userId: string) {   
-    return this.postService.create(createPostDto,userId);
+  create(@Body() createPostDto: CreatePostDto,@Req() req : any) {
+    return this.postService.create(createPostDto,req.user.id);
   }
 
   @Get()
@@ -42,7 +42,7 @@ export class PostController {
 
   //get all posts of a company
   @Get('user/:id')
-  findAllPostsOfUser(@Param('id') id: string) {
+  findAllPostsOfUser(@Param('id') id: string) {    
     return this.postService.findAllPostsOfUser(id);
   }
 
