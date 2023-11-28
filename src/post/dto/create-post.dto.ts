@@ -12,11 +12,11 @@ export class CreatePostDto {
     @IsEmpty()
     company: Types.ObjectId;
     
-    @IsNotEmpty({ message: 'The number of available positions is required' })
+    @IsOptional()
     numberOfAvailablePositions: number;
     
-    @IsNotEmpty({ message: 'The type of employment is required' })
-    typeOfEmployment: string;
+    @IsOptional()
+    typeOfEmployment: string[];
     
     @IsOptional()
     experienceLevel: string;
@@ -25,10 +25,10 @@ export class CreatePostDto {
     salary: string;
     
     @IsOptional()
-    levelOfStudy: string;
+    levelOfStudy: string[];
     
     @IsOptional()
-    language: string;
+    language: string[];
     
     
     @IsOptional()

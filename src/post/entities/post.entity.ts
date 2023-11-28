@@ -17,7 +17,7 @@ export class Post {
     numberOfAvailablePositions: number;
 
     @Prop()
-    typeOfEmployment: string;
+    typeOfEmployment: string[];
 
     @Prop()
     experienceLevel: string;
@@ -27,10 +27,10 @@ export class Post {
     salary: string;
 
     @Prop()
-    levelOfStudy: string;
+    levelOfStudy: string[];
 
     @Prop()
-    language: string;
+    language: string[];
 
     @Prop()
     sexe: string;

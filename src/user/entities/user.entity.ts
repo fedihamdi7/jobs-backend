@@ -101,6 +101,9 @@ export class UserAppliedNotification{
     @Prop({default : []})
     notifications: UserAppliedNotification[];
 
+    @Prop({type : Types.ObjectId, default : [], ref : 'Post'})
+    posts : Types.ObjectId[];
+
 }
 
 export type UserDocument = User & Document;
