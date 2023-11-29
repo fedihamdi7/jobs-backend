@@ -62,6 +62,9 @@ export class Post {
     @Prop()
     dateOfExpiration: Date;
 
+    @Prop({default: true})
+    isActive: boolean;
+
 }
 
 

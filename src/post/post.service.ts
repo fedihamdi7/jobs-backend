@@ -27,11 +27,17 @@ export class PostService {
   }
 
   findAll() {
-    return this.postModel.find().populate('company').sort({ dateOfCreation: -1 });;
+    return this.postModel.find({isActive : true}).populate('company').sort({ dateOfCreation: -1 });;
   }
 
   findOne(id: string) {
     return this.postModel.findById(id);
+  }
+
+  async toggleStatus(id: string) {
+    const post = await this.postModel.findById(id);
+    const updatedPost = await this.postModel.findByIdAndUpdate(id, { isActive: !post.isActive }, { new: true });
+    return updatedPost;
   }
 
   async update(id: string, updatePostDto: UpdatePostDto) {

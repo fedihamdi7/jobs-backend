@@ -55,4 +55,6 @@ export class CreatePostDto {
     @IsOptional()
     dateOfExpiration: Date;
     
+    @IsOptional()
+    isActive: boolean;
 }
