@@ -50,7 +50,9 @@ export class UserService {
     }
 
     if(resume) {
-      await unlinkAsync(`./assets/resumes/${user.resume}`);
+      if (user.resume){
+        await unlinkAsync(`./assets/resumes/${user.resume}`);
+      }
       updateUserDto.resume = resume.filename;
     }
 

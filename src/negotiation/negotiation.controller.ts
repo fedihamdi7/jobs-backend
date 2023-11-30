@@ -27,6 +27,12 @@ export class NegotiationController {
   
     return this.negotiationService.getNegotiationsByUser(id);
   }
+  @Get('/getNegotiationsByCompany')
+  getNegotiationsByCompany(@Req() req : any){
+    const id = new Types.ObjectId(req.user.id)
+  
+    return this.negotiationService.getNegotiationsByCompany(id);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

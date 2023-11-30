@@ -38,6 +38,10 @@ export class NegotiationService {
     
     return negotiations;
   }
+  async getNegotiationsByCompany(company_id: any) {
+    const negotiations = await this.negotiationModel.find({ company_id: company_id }).populate({ path: 'company_id', select: 'name' }).populate('post_id').populate({ path: 'user_id', select: '-password' });
+    return negotiations;
+  }
 
   findOne(id: string) {
     return this.negotiationModel.findById(id);
