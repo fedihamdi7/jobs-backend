@@ -22,7 +22,7 @@ export class NegotiationService {
     negotiation.company_id = new Types.ObjectId(createNegotiationDto.company_id);
     negotiation.post_id = new Types.ObjectId(createNegotiationDto.post_id);
     if (await negotiation.save()) {
-      return
+      return negotiation;
     } else {
       throw new BadRequestException('Something went wrong, Try again later');
     }

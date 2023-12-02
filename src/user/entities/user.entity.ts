@@ -22,6 +22,7 @@ export class UserAppliedNotification{
     seen : boolean;
     user : Types.ObjectId;
     post : Types.ObjectId;
+    negotiation : Types.ObjectId;
 }
 @Schema()
  export class User {

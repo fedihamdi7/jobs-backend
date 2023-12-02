@@ -83,7 +83,7 @@ export class PostService {
     const user = await this.userModel.findById(userId);
     const appliedPosts =  user.postsAppliedIn?.map(post => post.toString());
     const postIndex = appliedPosts?.indexOf(postId);
-
+    
     if (postIndex === -1) {
       // Post is not applied yet, apply to it
       await this.userModel.findByIdAndUpdate(userId, { $push: { postsAppliedIn: new Types.ObjectId(postId) } });
@@ -91,17 +91,8 @@ export class PostService {
       //get the company id 
       const post = await this.postModel.findById(postId);
       const companyId = post.company;
-      await this.addNotification(
-        {
-          _id : new Types.ObjectId(),
-          message : "New applicant to your post",
-          seen : false,
-          user : new Types.ObjectId(userId),
-          post : new Types.ObjectId(postId),
-        },
-        companyId.toString()
-        );
-      this.negotiationService.create(
+      
+      const createdNegotiation : any = await this.negotiationService.create(
         {
           user_id : userId,
           company_id : companyId,
@@ -115,6 +106,17 @@ export class PostService {
           additionalInfoUser : null,
         }
       )
+      await this.addNotification(
+        {
+          _id : new Types.ObjectId(),
+          message : "New applicant to your post",
+          seen : false,
+          user : new Types.ObjectId(userId),
+          post : new Types.ObjectId(postId),
+          negotiation : new Types.ObjectId(createdNegotiation._id)
+        },
+        companyId.toString()
+        );
       return { message: 'Applied to post successfully' };
     } else {
       // Post is already applied, unapply to it
@@ -156,7 +158,7 @@ export class PostService {
     const user = await this.userModel.findById(userId);
     const populatedNotifications = await Promise.all(
       user.notifications.map(async (notification) => {
-        return await this.userModel.populate(notification, { path: 'user' ,select : 'name'});
+        return await this.userModel.populate(notification, [{ path: 'user' ,select : 'name'},{path:'negotiation',model: 'Negotiation'}]);
       })
     );
     const userStream = this.notificationStreams.get(userId);
