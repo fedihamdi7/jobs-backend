@@ -154,10 +154,15 @@ export class PostService {
   
   async getUserNotifications(userId: string) {
     const user = await this.userModel.findById(userId);
+    const populatedNotifications = await Promise.all(
+      user.notifications.map(async (notification) => {
+        return await this.userModel.populate(notification, { path: 'user' ,select : 'name'});
+      })
+    );
     const userStream = this.notificationStreams.get(userId);
 
     if (userStream) {
-      userStream.next(JSON.stringify({ userId, notifications: [user.notifications] }));
+      userStream.next(JSON.stringify({ userId, notifications: [populatedNotifications] }));
     }
   }
 
