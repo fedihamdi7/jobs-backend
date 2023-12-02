@@ -65,10 +65,4 @@ export class PostController {
   }
 
 
-  @Get('notification/stream/:id')
-  @Sse()
-  whenNewApplication(@Param('id') id : string){
-    return this.postService.getNotificationStream(id);
-  }
-
 }

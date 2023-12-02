@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PostModule } from './post/post.module';
 import { NegotiationModule } from './negotiation/negotiation.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { NegotiationModule } from './negotiation/negotiation.module';
     AuthModule,
     PostModule,
     NegotiationModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
