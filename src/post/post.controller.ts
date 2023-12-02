@@ -79,4 +79,9 @@ export class PostController {
     return this.postService.getNotificationStream(id);
   }
 
+  @Patch('markNotificationAsSeen/:notif_id')
+  @UseGuards(AuthGuard('jwt'))
+  markNotificationAsSeen(@Param('notif_id') notif_id: string, @Req() req: any) {
+    return this.postService.markNotificationAsSeen(notif_id, req.user.id);
+  }
 }

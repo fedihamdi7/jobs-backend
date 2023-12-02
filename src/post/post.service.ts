@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -165,6 +165,39 @@ export class PostService {
 
     if (userStream) {
       userStream.next(JSON.stringify({ userId, notifications: [populatedNotifications] }));
+    }
+  }
+
+
+  async markNotificationAsSeen(notificationId: string, userId: string) {
+    try {
+      const user = await this.userModel.findById(userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      const notification = await user.notifications.map(notif => {
+        if (notif._id.toString() === notificationId) {
+          notif.seen = true;
+        }
+
+        return notif;
+      });
+      user.notifications = notification;
+      const userStream = this.notificationStreams.get(userId);
+      const populatedNotifications = await Promise.all(
+        user.notifications.map(async (notification) => {
+          return await this.userModel.populate(notification, [{ path: 'user' ,select : 'name'},{path:'negotiation',model: 'Negotiation'}]);
+        })
+      );
+
+      // update the stream
+      if (userStream) {
+        userStream.next(JSON.stringify({ userId, notifications: [populatedNotifications] }));
+      }
+      return this.userModel.findByIdAndUpdate(userId, user);
+
+    } catch (error) {
+      console.error('Error marking notification as seen:', error);
     }
   }
 
