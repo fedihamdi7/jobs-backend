@@ -36,6 +36,12 @@ export class PostController {
     return this.postService.toggleStatus(id);
   }
 
+  @Patch('clearNotifications')
+  @UseGuards(AuthGuard('jwt'))
+  clearNotifications(@Req() req: any) {
+    return this.postService.clearNotifications(req.user.id);
+  }
+  
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'),RolesGuard)
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
@@ -84,4 +90,6 @@ export class PostController {
   markNotificationAsSeen(@Param('notif_id') notif_id: string, @Req() req: any) {
     return this.postService.markNotificationAsSeen(notif_id, req.user.id);
   }
+
+ 
 }

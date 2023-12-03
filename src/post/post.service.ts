@@ -201,5 +201,28 @@ export class PostService {
     }
   }
 
+  async clearNotifications(userId: string) {
+    try {
+      // Find the user by ID
+      const user = await this.userModel.findById(userId);
+
+      if (!user) {
+        // Handle the case where the user is not found
+        throw new Error('User not found');
+      }
+
+      // Clear the notifications array
+      user.notifications = [];
+
+      // Save the updated user document
+      const updatedUser = await user.save();
+
+      return updatedUser;
+    } catch (error) {
+      // Handle errors (e.g., database errors)
+      throw new Error(`Failed to clear notifications: ${error.message}`);
+    }
+  }
+
 
 }
