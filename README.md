@@ -1,5 +1,5 @@
 # JOBS Platform Documentation
-![JOBS Platform](/assets/Logo_JOBS.png)
+![JOBS Platform](/Logo_JOBS.png)
 
 
 ## About
